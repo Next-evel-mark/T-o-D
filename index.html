@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T or D Website - Spin the Wheel!</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            padding: 30px;
+            margin-top: 20px;
+            position: relative;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            color: #ff6b6b;
+            text-shadow: 2px 2px 0 #ffd166;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #4ecdc4;
+            font-weight: 600;
+        }
+        
+        .game-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .input-section {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .wheel-section {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #ff6b6b;
+            text-align: center;
+        }
+        
+        .input-group {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        #name-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #4ecdc4;
+            border-radius: 50px 0 0 50px;
+            font-size: 1rem;
+            outline: none;
+        }
+        
+        #add-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 0 25px;
+            border-radius: 0 50px 50px 0;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        #add-btn:hover {
+            background: #ff5252;
+            transform: scale(1.05);
+        }
+        
+        .names-list {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            min-height: 200px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 2px dashed #4ecdc4;
+        }
+        
+        .names-list ul {
+            list-style-type: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .name-item {
+            background: #ffd166;
+            padding: 8px 15px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            animation: pop-in 0.3s ease;
+        }
+        
+        @keyframes pop-in {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #ff6b6b;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .wheel-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 30px;
+        }
+        
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #ffd166;
+            position: relative;
+            overflow: hidden;
+            border: 8px solid #ff6b6b;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+        }
+        
+        .wheel-item {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: bottom right;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .wheel-center {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+        
+        .pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 40px;
+            color: #ff6b6b;
+            z-index: 20;
+            text-shadow: 0 0 10px rgba(255,255,255,0.7);
+        }
+        
+        #spin-btn {
+            background: linear-gradient(to right, #ff6b6b, #ff5252);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        
+        #spin-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.6);
+        }
+        
+        #spin-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .result-container {
+            background: #4ecdc4;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            margin-top: 20px;
+            color: white;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        #result {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            min-height: 60px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: white;
+            font-weight: 500;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .footer p {
+            margin: 5px 0;
+        }
+        
+        .heart {
+            color: #ff6b6b;
+            display: inline-block;
+            animation: heartbeat 1.2s infinite;
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .empty-message {
+            color: #6c757d;
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .game-area {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>T or D Website</h1>
+            <p class="subtitle">Add names, spin the wheel, and let fate decide who takes the challenge!</p>
+        </header>
+        
+        <div class="game-area">
+            <div class="input-section">
+                <h2 class="section-title">Add Participants</h2>
+                <div class="input-group">
+                    <input type="text" id="name-input" placeholder="Enter a name...">
+                    <button id="add-btn">ADD</button>
+                </div>
+                <div class="names-list">
+                    <div id="names-container"></div>
+                </div>
+            </div>
+            
+            <div class="wheel-section">
+                <h2 class="section-title">Spin the Wheel</h2>
+                <div class="wheel-container">
+                    <div class="pointer">
+                        <i class="fas fa-caret-down"></i>
+                    </div>
+                    <div class="wheel" id="wheel">
+                        <div class="wheel-center">SPIN</div>
+                        <!-- Wheel segments will be generated by JavaScript -->
+                    </div>
+                </div>
+                <button id="spin-btn">SPIN THE WHEEL!</button>
+                
+                <div class="result-container">
+                    <h3>Selected Player:</h3>
+                    <div id="result">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>©next_level_mark</p>
+        <p>Made with <span class="heart">❣️</span> for fun and games</p>
+    </div>
+
+    <script>
+        // DOM elements
+        const nameInput = document.getElementById('name-input');
+        const addBtn = document.getElementById('add-btn');
+        const namesContainer = document.getElementById('names-container');
+        const spinBtn = document.getElementById('spin-btn');
+        const wheel = document.getElementById('wheel');
+        const resultDisplay = document.getElementById('result');
+        
+        // Game state
+        let players = [];
+        let isSpinning = false;
+        const colors = ['#ff6b6b', '#4ecdc4', '#ffd166', '#6a0572', '#1a936f', '#114b5f', '#f9c80e'];
+        
+        // Add player function
+        function addPlayer() {
+            const name = nameInput.value.trim();
+            
+            if (name && !players.includes(name)) {
+                players.push(name);
+                renderPlayers();
+                nameInput.value = '';
+                nameInput.focus();
+                updateWheel();
+            } else if (players.includes(name)) {
+                alert('This name is already in the list!');
+            }
+        }
+        
+        // Remove player function
+        function removePlayer(name) {
+            players = players.filter(player => player !== name);
+            renderPlayers();
+            updateWheel();
+        }
+        
+        // Render player list
+        function renderPlayers() {
+            if (players.length === 0) {
+                namesContainer.innerHTML = '<div class="empty-message">Add some players to get started!</div>';
+                return;
+            }
+            
+            namesContainer.innerHTML = '<ul></ul>';
+            const list = namesContainer.querySelector('ul');
+            
+            players.forEach(player => {
+                const li = document.createElement('li');
+                li.className = 'name-item';
+                li.innerHTML = `
+                    ${player}
+                    <button class="delete-btn" onclick="removePlayer('${player}')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                list.appendChild(li);
+            });
+        }
+        
+        // Update wheel segments
+        function updateWheel() {
+            wheel.innerHTML = '<div class="wheel-center">SPIN</div>';
+            
+            if (players.length === 0) return;
+            
+            const angle = 360 / players.length;
+            
+            players.forEach((player, index) => {
+                const segment = document.createElement('div');
+                segment.className = 'wheel-item';
+                segment.textContent = player;
+                segment.style.transform = `rotate(${angle * index}deg)`;
+                segment.style.backgroundColor = colors[index % colors.length];
+                segment.style.setProperty('--clip-angle', `${angle}deg`);
+                
+                // Create the triangular segment
+                segment.innerHTML = `
+                    <div style="
+                        width: 100%;
+                        height: 100%;
+                        background: ${colors[index % colors.length]};
+                        clip-path: polygon(0 0, 100% 0, 0 100%);
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                    "></div>
+                    <div style="
+                        position: absolute;
+                        transform: rotate(${angle/2}deg);
+                        transform-origin: bottom right;
+                        bottom: 20px;
+                        right: 20px;
+                        font-size: ${players.length > 8 ? '0.8rem' : '1rem'};
+                        text-align: center;
+                    ">${player}</div>
+                `;
+                
+                wheel.appendChild(segment);
+            });
+        }
+        
+        // Spin the wheel
+        function spinWheel() {
+            if (players.length < 2) {
+                alert('Add at least 2 players to spin the wheel!');
+                return;
+            }
+            
+            if (isSpinning) return;
+            
+            isSpinning = true;
+            spinBtn.disabled = true;
+            resultDisplay.textContent = 'Spinning...';
+            
+            // Calculate a random rotation (at least 5 full rotations + random segment)
+            const segmentAngle = 360 / players.length;
+            const extraRotation = 1800; // 5 full rotations (5 * 360)
+            const randomSegment = Math.floor(Math.random() * players.length);
+            const targetRotation = extraRotation + (randomSegment * segmentAngle);
+            
+            // Apply the rotation
+            wheel.style.transform = `rotate(${targetRotation}deg)`;
+            
+            // Determine the winner after the spin completes
+            setTimeout(() => {
+                const winner = players[randomSegment];
+                resultDisplay.innerHTML = `<span style="color: #ffd166; text-shadow: 0 0 10px rgba(0,0,0,0.5);">${winner}</span>`;
+                isSpinning = false;
+                spinBtn.disabled = false;
+                
+                // Animate the winner name
+                resultDisplay.style.animation = 'none';
+                setTimeout(() => {
+                    resultDisplay.style.animation = 'pop-in 0.5s ease';
+                }, 10);
+            }, 4000);
+        }
+        
+        // Event listeners
+        addBtn.addEventListener('click', addPlayer);
+        nameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addPlayer();
+        });
+        spinBtn.addEventListener('click', spinWheel);
+        
+        // Initialize
+        renderPlayers();
+    </script>
+</body>
+</html>
